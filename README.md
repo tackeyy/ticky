@@ -1,5 +1,7 @@
 # ticky — TickTick in your terminal.
 
+[\[日本語\]](README_ja.md)
+
 A CLI tool for managing TickTick tasks via the Open API. OAuth 2.0 authentication, project/task CRUD, tag management, and script-friendly design.
 
 ## Features
