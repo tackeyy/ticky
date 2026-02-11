@@ -16,6 +16,20 @@ TickTick Open API を使ってタスクを管理する CLI ツール。OAuth 2.0
 
 ## インストール
 
+### Homebrew
+
+```bash
+brew install tackeyy/tap/ticky
+```
+
+### Go
+
+```bash
+go install github.com/tackeyy/ticky@latest
+```
+
+### ソースからビルド
+
 ```bash
 git clone https://github.com/tackeyy/ticky.git
 cd ticky
@@ -48,8 +62,8 @@ export TICKTICK_CLIENT_SECRET=your_client_secret
 ### 4. ログインして実行
 
 ```bash
-./ticky auth login
-./ticky tasks list --json
+ticky auth login
+ticky tasks list --json
 ```
 
 ## コマンド

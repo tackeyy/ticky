@@ -16,6 +16,20 @@ A CLI tool for managing TickTick tasks via the Open API. OAuth 2.0 authenticatio
 
 ## Installation
 
+### Homebrew
+
+```bash
+brew install tackeyy/tap/ticky
+```
+
+### Go
+
+```bash
+go install github.com/tackeyy/ticky@latest
+```
+
+### Build from source
+
 ```bash
 git clone https://github.com/tackeyy/ticky.git
 cd ticky
@@ -48,8 +62,8 @@ export TICKTICK_CLIENT_SECRET=your_client_secret
 ### 4. Login and Run
 
 ```bash
-./ticky auth login
-./ticky tasks list --json
+ticky auth login
+ticky tasks list --json
 ```
 
 ## Commands
