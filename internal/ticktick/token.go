@@ -51,11 +51,42 @@ func LoadToken() (*OAuthToken, error) {
 	return &token, nil
 }
 
-// DeleteToken removes the token file.
+// DeleteToken removes the token file and cached config.
 func DeleteToken() error {
 	path := TokenPath()
 	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to delete token file: %w", err)
 	}
+	// Also remove cached config
+	configPath := configDir()
+	_ = os.Remove(filepath.Join(configPath, "config.json"))
 	return nil
+}
+
+func configDir() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, tokenDir)
+}
+
+// SaveInboxID caches the inbox project ID.
+func SaveInboxID(id string) error {
+	dir := configDir()
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		return err
+	}
+	data, _ := json.Marshal(map[string]string{"inbox_id": id})
+	return os.WriteFile(filepath.Join(dir, "config.json"), data, 0600)
+}
+
+// LoadInboxID reads the cached inbox project ID.
+func LoadInboxID() (string, error) {
+	data, err := os.ReadFile(filepath.Join(configDir(), "config.json"))
+	if err != nil {
+		return "", err
+	}
+	var cfg map[string]string
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		return "", err
+	}
+	return cfg["inbox_id"], nil
 }

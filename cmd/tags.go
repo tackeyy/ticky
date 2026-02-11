@@ -25,14 +25,14 @@ var tagsListCmd = &cobra.Command{
 			return err
 		}
 
-		projects, err := client.GetProjects()
+		projectIDs, err := client.GetAllProjectIDs()
 		if err != nil {
 			return fmt.Errorf("failed to list projects: %w", err)
 		}
 
 		tagCount := make(map[string]int)
-		for _, p := range projects {
-			pd, err := client.GetProjectData(p.ID)
+		for _, pid := range projectIDs {
+			pd, err := client.GetProjectData(pid)
 			if err != nil {
 				continue
 			}

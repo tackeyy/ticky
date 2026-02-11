@@ -2,13 +2,6 @@ package ticktick
 
 import "time"
 
-// User represents a TickTick user.
-type User struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Name     string `json:"name"`
-}
-
 // Project represents a TickTick project (list).
 type Project struct {
 	ID         string `json:"id"`

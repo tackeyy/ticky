@@ -61,15 +61,14 @@ func (c *Client) Get(path string) ([]byte, error) {
 
 // Post performs a POST request with JSON body.
 func (c *Client) Post(path string, body any) ([]byte, error) {
-	var buf *bytes.Buffer
-	if body != nil {
-		data, err := json.Marshal(body)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal request: %w", err)
-		}
-		buf = bytes.NewBuffer(data)
+	if body == nil {
+		return c.do("POST", path, nil)
 	}
-	return c.do("POST", path, buf)
+	data, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+	return c.do("POST", path, bytes.NewBuffer(data))
 }
 
 // Delete performs a DELETE request.
@@ -104,19 +103,6 @@ func (c *Client) do(method, path string, body io.Reader) ([]byte, error) {
 	}
 
 	return respBody, nil
-}
-
-// GetUser returns the authenticated user.
-func (c *Client) GetUser() (*User, error) {
-	data, err := c.Get("/user")
-	if err != nil {
-		return nil, err
-	}
-	var user User
-	if err := json.Unmarshal(data, &user); err != nil {
-		return nil, fmt.Errorf("failed to parse user: %w", err)
-	}
-	return &user, nil
 }
 
 // GetProjects returns all projects.
@@ -207,4 +193,46 @@ func (c *Client) CompleteTask(projectID, taskID string) error {
 func (c *Client) DeleteTask(projectID, taskID string) error {
 	_, err := c.Delete("/project/" + projectID + "/task/" + taskID)
 	return err
+}
+
+// DiscoverInboxID discovers the Inbox project ID by creating and deleting a temporary task.
+func (c *Client) DiscoverInboxID() (string, error) {
+	// Check cache first
+	if id, err := LoadInboxID(); err == nil && id != "" {
+		return id, nil
+	}
+
+	task, err := c.CreateTask(&TaskCreateRequest{Title: ".ticky-inbox-probe"})
+	if err != nil {
+		return "", fmt.Errorf("failed to discover inbox ID: %w", err)
+	}
+	inboxID := task.ProjectID
+	_ = c.DeleteTask(inboxID, task.ID)
+
+	// Cache for future use
+	_ = SaveInboxID(inboxID)
+
+	return inboxID, nil
+}
+
+// GetAllProjectIDs returns all project IDs including Inbox.
+func (c *Client) GetAllProjectIDs() ([]string, error) {
+	projects, err := c.GetProjects()
+	if err != nil {
+		return nil, err
+	}
+
+	inboxID, err := c.DiscoverInboxID()
+	if err != nil {
+		return nil, err
+	}
+
+	ids := []string{inboxID}
+	for _, p := range projects {
+		if p.ID != inboxID {
+			ids = append(ids, p.ID)
+		}
+	}
+
+	return ids, nil
 }

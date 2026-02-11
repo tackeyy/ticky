@@ -49,17 +49,17 @@ var authStatusCmd = &cobra.Command{
 			return nil
 		}
 
-		user, err := client.GetUser()
+		// Verify token by fetching projects (TickTick Open API has no /user endpoint)
+		projects, err := client.GetProjects()
 		if err != nil {
-			return fmt.Errorf("failed to get user info: %w", err)
+			return fmt.Errorf("authentication check failed: %w", err)
 		}
 
 		if outputJSON {
-			out := map[string]string{
-				"status":   "authenticated",
-				"id":       user.ID,
-				"username": user.Username,
-				"name":     user.Name,
+			out := map[string]any{
+				"status":         "authenticated",
+				"project_count":  len(projects),
+				"token_path":     ticktick.TokenPath(),
 			}
 			enc := json.NewEncoder(os.Stdout)
 			enc.SetIndent("", "  ")
@@ -67,12 +67,12 @@ var authStatusCmd = &cobra.Command{
 		}
 
 		if outputPlain {
-			fmt.Printf("%s\t%s\t%s\n", user.ID, user.Username, user.Name)
+			fmt.Printf("authenticated\t%d projects\n", len(projects))
 			return nil
 		}
 
-		fmt.Printf("Authenticated as: %s (%s)\n", user.Name, user.Username)
-		fmt.Printf("User ID: %s\n", user.ID)
+		fmt.Printf("Authenticated (token: %s)\n", ticktick.TokenPath())
+		fmt.Printf("Projects: %d\n", len(projects))
 		return nil
 	},
 }

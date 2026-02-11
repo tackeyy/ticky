@@ -428,19 +428,7 @@ func init() {
 
 // findInboxID finds the Inbox project ID.
 func findInboxID(client *ticktick.Client) (string, error) {
-	projects, err := client.GetProjects()
-	if err != nil {
-		return "", fmt.Errorf("failed to list projects: %w", err)
-	}
-	for _, p := range projects {
-		if p.Kind == "INBOX" || p.Name == "Inbox" {
-			return p.ID, nil
-		}
-	}
-	if len(projects) > 0 {
-		return projects[0].ID, nil
-	}
-	return "", fmt.Errorf("no projects found")
+	return client.DiscoverInboxID()
 }
 
 func containsStr(slice []string, s string) bool {
