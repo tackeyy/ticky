@@ -8,6 +8,9 @@ import (
 )
 
 var (
+	version     = "dev"
+	commit      = "none"
+	date        = "unknown"
 	outputJSON  bool
 	outputPlain bool
 )
@@ -28,4 +31,6 @@ func Execute() {
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&outputJSON, "json", false, "Output in JSON format")
 	rootCmd.PersistentFlags().BoolVar(&outputPlain, "plain", false, "Output in TSV format")
+	rootCmd.Version = version
+	rootCmd.SetVersionTemplate(fmt.Sprintf("ticky version %s (commit: %s, built: %s)\n", version, commit, date))
 }
