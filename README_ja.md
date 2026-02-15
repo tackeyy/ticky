@@ -254,12 +254,29 @@ abc123def456789012345678	inbox123	PR レビュー	high	2026-02-12T14:59:59.000+0
 ## 開発
 
 ```bash
+# ビルド
 go build -o ticky .
+
+# テスト実行
+go test -v ./...
+
+# カバレッジ付きテスト
+go test -cover ./...
 ```
+
+詳細は [docs/TESTING.md](docs/TESTING.md) を参照してください。
 
 ## ライセンス
 
 MIT
+
+## コントリビューション
+
+コントリビューション歓迎です！Pull Request を送る前に [Contributing Guide](CONTRIBUTING.md) をお読みください。
+
+参考:
+- [テストガイド](docs/TESTING.md)
+- [行動規範](CODE_OF_CONDUCT.md)
 
 ## リンク
 

@@ -251,12 +251,29 @@ abc123def456789012345678	inbox123	Review PR	high	2026-02-12T14:59:59.000+0000	wo
 ## Development
 
 ```bash
+# Build
 go build -o ticky .
+
+# Run tests
+go test -v ./...
+
+# Run tests with coverage
+go test -cover ./...
 ```
+
+See [docs/TESTING.md](docs/TESTING.md) for detailed testing guide.
 
 ## License
 
 MIT
+
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a Pull Request.
+
+See also:
+- [Testing Guide](docs/TESTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## Links
 
