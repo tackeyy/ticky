@@ -19,10 +19,11 @@ import (
 
 const (
 	authURL     = "https://ticktick.com/oauth/authorize"
-	tokenURL    = "https://ticktick.com/oauth/token"
 	redirectURI = "http://localhost:18080/callback"
 	listenAddr  = "localhost:18080"
 )
+
+var tokenURL = "https://ticktick.com/oauth/token"
 
 // OAuthLogin performs the OAuth 2.0 Authorization Code flow.
 func OAuthLogin() (*OAuthToken, error) {

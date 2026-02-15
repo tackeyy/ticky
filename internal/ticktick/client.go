@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const baseURL = "https://api.ticktick.com/open/v1"
+var baseURL = "https://api.ticktick.com/open/v1"
 
 // Client is the TickTick API client.
 type Client struct {
