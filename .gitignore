@@ -2,3 +2,4 @@ ticky
 *.exe
 .DS_Store
 dist/
+.claude/
