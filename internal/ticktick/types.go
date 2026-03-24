@@ -1,6 +1,9 @@
 package ticktick
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 // Project represents a TickTick project (list).
 type Project struct {
@@ -29,9 +32,44 @@ type Task struct {
 	Tags        []string  `json:"tags,omitempty"`
 	TimeZone    string    `json:"timeZone,omitempty"`
 	IsAllDay    bool      `json:"isAllDay"`
-	CompletedAt string    `json:"completedTime,omitempty"`
-	CreatedAt   time.Time `json:"createdTime,omitempty"`
-	ModifiedAt  time.Time `json:"modifiedTime,omitempty"`
+	CompletedAt string       `json:"completedTime,omitempty"`
+	CreatedAt   FlexTime     `json:"createdTime,omitempty"`
+	ModifiedAt  FlexTime     `json:"modifiedTime,omitempty"`
+}
+
+// FlexTime handles TickTick's non-standard date format (+0000 instead of +00:00).
+type FlexTime struct {
+	time.Time
+}
+
+func (ft *FlexTime) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), `"`)
+	if s == "" || s == "null" {
+		return nil
+	}
+	// Try RFC3339 first
+	if t, err := time.Parse(time.RFC3339, s); err == nil {
+		ft.Time = t
+		return nil
+	}
+	// Try TickTick's +0000 format
+	if t, err := time.Parse("2006-01-02T15:04:05.000+0000", s); err == nil {
+		ft.Time = t
+		return nil
+	}
+	// Try without milliseconds
+	if t, err := time.Parse("2006-01-02T15:04:05+0000", s); err == nil {
+		ft.Time = t
+		return nil
+	}
+	return &time.ParseError{Value: s, Message: "unsupported time format"}
+}
+
+func (ft FlexTime) MarshalJSON() ([]byte, error) {
+	if ft.Time.IsZero() {
+		return []byte("null"), nil
+	}
+	return []byte(`"` + ft.Time.Format(time.RFC3339) + `"`), nil
 }
 
 // ProjectData is the response from GET /project/{id}/data.
